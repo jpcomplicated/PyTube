@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from tkinter import *
 from tkinter.filedialog import *
+from tkinter import ttk
 import youtube_dl
 import threading
 
@@ -14,15 +15,17 @@ class MyLogger(object):
 
 	def error(self, msg):
 		download_button['state'] = NORMAL
-		download_button['text'] = 'Download'
 		print(msg)
 
 
-def my_hook(d):
+def hook_status(d):
 	if d['status'] == 'finished':
 		download_button['state'] = NORMAL
-		download_button['text'] = 'Download'
 		print('Downloaing finished.')
+
+def hook_progress(d):
+	percent = float(d['downloaded_bytes'])/float(d['total_bytes'])*100.0
+	progressbar['value'] = percent
 
 
 #主窗口
@@ -32,10 +35,11 @@ def main_window():
 	global var_Folder
 	global var_Proxy
 	global download_button
+	global progressbar
 
 	root = Tk()
 	root.title('Video Downloader')               
-	root.geometry('400x160')  
+	root.geometry('400x200')  
 	root.resizable(width=False, height=False)
 
 	#url
@@ -47,7 +51,7 @@ def main_window():
 	#url text
 	var_URL = StringVar()
 	text_url = Entry(root, textvariable=var_URL)
-	text_url.place(x=55, y=10, width=250, height=25)
+	text_url.place(x=55, y=10, width=330, height=25)
 
 	#folder
 	var_folder = StringVar()
@@ -69,7 +73,7 @@ def main_window():
 	#proxy text
 	var_Proxy = StringVar()
 	text_proxy = Entry(root, textvariable=var_Proxy)
-	text_proxy.place(x=55, y=45, width=250, height=25)
+	text_proxy.place(x=55, y=45, width=330, height=25)
 
 	#open button
 	open_button = Button(root, text='Open', command=c_save)
@@ -77,7 +81,16 @@ def main_window():
 
 	#download button
 	download_button = Button(root, text='Download', command=create_download_thread)
-	download_button.place(x=150, y=120, height=25)
+	download_button.place(x=165, y=160, height=25)
+
+	#下载进度条
+	#folder
+	var_progress = StringVar()
+	label_progress = Label(root, textvariable=var_progress)
+	var_progress.set('Rate:')
+	label_progress.place(x=10, y=122)
+	progressbar = ttk.Progressbar(root, orient=HORIZONTAL, length=330, mode='determinate')
+	progressbar.place(x=55, y=120)
 
 	#进入消息循环
 	root.mainloop()      
@@ -92,7 +105,6 @@ def c_save():
 #创建下载线程
 def create_download_thread():
 	download_button['state'] = DISABLED
-	download_button['text'] = 'Downloading...'
 	t = threading.Thread(target=video_download, name='DownloadThread')
 	t.start()
 
@@ -112,9 +124,12 @@ var_URL = None
 var_Folder = None
 var_Proxy = None
 download_button = None
+progressbar = None
 ydl_opts = {
 	'logger': MyLogger(),
-	'progress_hooks': [my_hook],
+	'progress_hooks': [hook_status, hook_progress],
+	'writesubtitles': True,
+	'subtitleslangs': ['zh_CN'],
 }
 
 
