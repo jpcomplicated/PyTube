@@ -18,11 +18,15 @@ class MyLogger(object):
 		print(msg)
 
 
-def my_hook(d):
+def hook_status(d):
 	if d['status'] == 'finished':
 		download_button['state'] = NORMAL
 		download_button['text'] = 'Download'
 		print('Downloaing finished.')
+
+def hook_progress(d):
+	percent = float(d['downloaded_bytes'])/float(d['total_bytes'])*100.0
+	print(percent)
 
 
 #主窗口
@@ -114,7 +118,9 @@ var_Proxy = None
 download_button = None
 ydl_opts = {
 	'logger': MyLogger(),
-	'progress_hooks': [my_hook],
+	'progress_hooks': [hook_status, hook_progress],
+	'writesubtitles': True,
+	'subtitleslangs': ['zh_CN'],
 }
 
 
