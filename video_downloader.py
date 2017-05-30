@@ -24,8 +24,15 @@ def hook_status(d):
 		print('Downloaing finished.')
 
 def hook_progress(d):
-	percent = float(d['downloaded_bytes'])/float(d['total_bytes'])*100.0
-	progressbar['value'] = percent
+	total_bytes = None
+	if d['status'] == 'downloading':
+		if 'total_bytes' in d.keys():
+			total_bytes = float(d['total_bytes'])
+		elif 'total_bytes_estimate' in d.keys():
+			total_bytes = float(d['total_bytes_estimate'])
+	if total_bytes != None:
+		percent = float(d['downloaded_bytes'])/total_bytes*100.0
+		progressbar['value'] = percent
 
 
 #主窗口
