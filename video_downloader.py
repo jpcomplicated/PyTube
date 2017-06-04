@@ -119,7 +119,8 @@ def create_download_thread():
 #下载函数
 def video_download():
 	ydl_opts['outtmpl'] = var_Folder.get() + '/%(title)s.%(ext)s'
-	ydl_opts['proxy'] = var_Proxy.get()
+	if var_Proxy.get() != '':
+		ydl_opts['proxy'] = var_Proxy.get()
 	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		ydl.download([var_URL.get()])
 
@@ -137,6 +138,7 @@ ydl_opts = {
 	'progress_hooks': [hook_status, hook_progress],
 	'writesubtitles': True,
 	'subtitleslangs': ['zh_CN'],
+	'nocheckcertificate': True,
 }
 
 
