@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utg-8 -*-
 from __future__ import unicode_literals
 from tkinter import *
 from tkinter.filedialog import *
