@@ -33,9 +33,9 @@ def my_hook(d):
 			total_bytes = float(d['total_bytes'])
 		elif 'total_bytes_estimate' in d.keys():
 			total_bytes = float(d['total_bytes_estimate'])
-			if total_bytes != None:
-				percent = float(d['downloaded_bytes'])/total_bytes*100.0
-				progressbar['value'] = percent
+		if total_bytes != None:
+			percent = float(d['downloaded_bytes'])/total_bytes*100.0
+			progressbar['value'] = percent
 
 	if 'elapsed' in d.keys():
 		if None != d['elapsed']:
